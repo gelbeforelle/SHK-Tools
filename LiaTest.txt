@@ -1,0 +1,11 @@
+Füllen Sie die [[Lücke]] aus.
+
+Eine Frage:
+[[x]] Erstens
+[[X]] Zweitens
+[[]] Drittens
+[[ ]] Viertens
+
+Bewertung:
+[()] Gut
+[(x)] Schlecht
