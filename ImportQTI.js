@@ -2,6 +2,7 @@ function parseParagraph(paragraph, xmlDoc){
 	let children = paragraph.childNodes;
 	console.log(children.length);
 	let result = "";
+	
 	for(let i=0; i<children.length; i++){
 		console.log("Reading " + children[i].tagName);
 		if(children[i].tagName != "textEntryInteraction") {
@@ -19,6 +20,8 @@ function parseParagraph(paragraph, xmlDoc){
 
 
 function XMLDOM(file){
+	
+	
 	let result = "";
 	console.log("running file parser");
 	let parser = new DOMParser (),
