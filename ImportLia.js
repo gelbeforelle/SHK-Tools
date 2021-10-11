@@ -5,6 +5,12 @@ const taskType = {
     paragraph: 3
 };
 
+function idGen(){
+ return "id-TUBAF-" + Date.now();
+}
+
+const xmlns = "http://www.imsglobal.org/xsd/imsqti_v2p1";
+
 var currType = taskType.text;
 
 var doc = document.createElement("itemBody");
@@ -20,10 +26,12 @@ class Task {
 
 class Test {
     
+
    // head = `<assessmentItem title="${title}" timeDependent="false" adaptive="false" identifier="id75621a10-12f5-4c51-962c-fe9866df6b3e" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1p1.xsd http://www.w3.org/1998/Math/MathML http://www.w3.org/Math/XMLSchema/mathml2/mathml2.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1">`;
     
     constructor(title){
         if(title) this.title = title;
+
         else this.title = "Unnamed test";
         this.tasks = [];
         this.valid = false;
@@ -37,10 +45,104 @@ class Test {
     }
     toQTI(){
         var xmlDoc = document.implementation.createDocument("", "", null);
-        var node = xmlDoc.createElement("test");
-        xmlDoc.appendChild(node);
+        var main = xmlDoc.createElement("assessmentItem");
+        main.setAttribute("title", this.title);
+        main.setAttribute("identifier", idGen());
+        main.setAttribute("xmlns", xmlns);
+        var taskcopy = this.tasks;
+        var response;
+        for(let i=0, lastType=taskType.paragraph; i<this.tasks.length; i++){
+            
+            if(this.tasks[i].type != taskType.paragraph) if(this.tasks[i].type != lastType || this.tasks[i].type == taskType.text){
+                if(response) main.appendChild(response);
+                lastType = this.tasks[i].type;
+                response = xmlDoc.createElement("responseDeclaration");
+                response.setAttribute("identifier", "RESPONSE_"+i);
+
+                let cardinality;
+                if(this.tasks[i].type == taskType.multipleChoice) cardinality = "multiple";
+                else cardinality = "single";
+                response.setAttribute("cardinality", cardinality);
+
+                if(this.tasks[i].type == taskType.text){
+                    let correct = xmlDoc.createElement("correctResponse");
+                    let value = xmlDoc.createElement("value");
+                    value.innerHTML = this.tasks[i].text;
+                    correct.appendChild(value);
+                    response.appendChild(correct);
+                }
+
+            } if((this.tasks[i].type == taskType.singleChoice || this.tasks[i].type == taskType.multipleChoice) && this.tasks[i].isCorrect) {
+                if(response.getElementsByTagName("correctResponse").length<=0){
+                    response.appendChild(xmlDoc.createElement("correctResponse"));
+                    console.log("Created missing correctResponse!");
+                }
+                
+                let value = xmlDoc.createElement("value");
+                value.innerHTML = "ID_" + i;
+                console.log("Data added:");
+                console.log(value.innerText);
+                console.log(this.tasks[i].text);
+
+                response.getElementsByTagName("correctResponse")[0].appendChild(value);
+            }
+        }
+        if(response) main.appendChild(response);
+        let body = xmlDoc.createElement("itemBody");
+        let currParagraph=xmlDoc.createElement("p");
+        for(let i=0; i<this.tasks.length;){
+            let entry;
+            console.log("Starting switch... ", i);
+            switch(this.tasks[i].type){
+                case taskType.text : entry = xmlDoc.createElement("textEntryInteraction");
+                                     entry.setAttribute("responseIdentifier", "RESPONSE_"+i);
+                                     console.log("Text entry: ", entry.outerHTML);
+                                     currParagraph.innerHTML+=entry.outerHTML;
+                                     console.log(this.tasks[i]);
+                                     i++;
+                                     
+                                     break;
+                case taskType.multipleChoice : case taskType.singleChoice : if(currParagraph.innerHTML) body.appendChild(currParagraph);
+                                               currParagraph = xmlDoc.createElement("p");
+                                               entry = xmlDoc.createElement("choiceInteraction");
+                                               entry.setAttribute("responseIdentifier", "RESPONSE_"+i);
+                                               for(; i<this.tasks.length; i++){
+                                                if(!(this.tasks[i].type == taskType.singleChoice || this.tasks[i].type == taskType.multipleChoice)) break;
+                                                console.log("Adding to MC/ SC: ", this.tasks[i].text);
+                                                let choice = xmlDoc.createElement("simpleChoice");
+                                                choice.setAttribute("identifier", "ID_"+i);
+                                                let p = xmlDoc.createElement("p");
+                                                p.innerHTML=this.tasks[i].text;
+                                                choice.appendChild(p);
+                                                entry.appendChild(choice);
+                                               }
+                                               body.appendChild(entry);
+                                               console.log(this.tasks[i]);
+                                               
+                                               break;
+                case taskType.paragraph : if(this.tasks[i].isCorrect && this.tasks[i].text){
+                                           body.appendChild(currParagraph);
+                                           currParagraph = xmlDoc.createElement("p");
+                                           currParagraph.innerHTML = this.tasks[i].text;
+                                          } else {
+                                            currParagraph.innerHTML += this.tasks[i].text;
+                                          }
+                                          console.log(this.tasks[i]);
+                                          i++;
+                                          
+                                          break;
+                default: console.log("Something went wrong.... ", this.tasks[i].type); i++; break;
+
+            }
+        }
+        if(currParagraph.innerHTML) body.appendChild(currParagraph);
+        main.appendChild(body);
+        xmlDoc.appendChild(main);
+       // xmlDoc.appendChild(node);
         console.log(xmlDoc.childNodes);
+        return xmlDoc;
     }
+   
 
 }
 
@@ -155,6 +257,11 @@ function parsePage(text, test){
         }
     }
     console.log("Finished reading");
+    
+    var content = test.toQTI();
+    if(test.valid && content != undefined){
+        
+        download(test.title, content.childNodes[0].outerHTML);
+    }
     console.log(test);
-    test.toQTI();
 }
