@@ -6,6 +6,9 @@
     <script src="ImportLia.js"></script>
     <script src="Upload.js"></script>
     <script src="Download.js"></script>
+    <script src="jszip.js"></script>
+    <script src="Filesaver.js"></script>
+    <script src="responseProcessing.js"></script>
 </head>
 <body>
     <section>
@@ -14,8 +17,12 @@
         </h1>
         <input type="file" id="xmlupload" name="xmlupload" multiple=""/>
         <input type="button" value="LiaScript auslesen" id="button1" onclick="liaUpload()">
+        
+        <label><input type="checkbox" id="onyxmode" checked="true"/>ONYX Kompatibilitätsmodus verwenden</label>
+        
         <h2>
             Ihr ONYX-Code lautet:
+            
         </h2>
         <p id="onyxfield"></p>
         
