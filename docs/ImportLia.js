@@ -25,9 +25,7 @@ function idGen(){
 
 var currType = taskType.text;
 
-function addResponceProcessing(xmlDoc){
-    
-}
+
 
 var doc = document.createElementNS(ns, "itemBody");
 
@@ -61,23 +59,34 @@ class Test {
         }
     }
 
-    splitCondition(i,  lastTask){
+    splitCondition(i,  lastTask, lastType){
         
 
         var result = false;
 
         var breakFlag = false;
         var taskFlag = false;
+        
         for(i++ ; i<this.tasks.length; i++){
-            if(this.tasks[i].type==taskType.paragraph && this.tasks[i].isCorrect && isEmptyOrSpaces(this.tasks[i].text)){
-                breakFlag = true;
-                break;
-            } else if(this.tasks[i].type != lastTask && this.tasks[i].type != taskType.paragraph){
-                taskFlag = true;
-                break;
+            if(this.tasks[i].type != taskType.paragraph){
+                if(this.tasks[i].type != lastTask){
+                     taskFlag = true;
+                     break;
+                }
+                else if(this.tasks[i].type != lastType && this.tasks[i] != taskType.paragraph) return true;
+                console.log(i);
+                
+            
+            } else if(this.tasks[i].type==taskType.paragraph && this.tasks[i].isCorrect){
+                if(isEmptyOrSpaces(this.tasks[i].text)) {
+                    breakFlag = true;
+                    console.log(i);
+                    break;
+                } 
             }
 
         }
+        
        // return (this.tasks[i].type != lastTask && this.tasks[i].type != taskType.paragraph) || ((this.tasks[i].type != lastTask || linebreak) && (this.tasks[i].type==taskType.singleChoice || this.tasks[i].type==taskType.multipleChoice));
        if(breakFlag) return false;
        else return taskFlag && !isNullOrUndefined(lastTask);
@@ -93,8 +102,8 @@ class Test {
         var lastIndex = 0;
 
         for(let i=0; i<this.tasks.length; i++){
-            console.log(i, this.splitCondition(i, lastTask), lastTask,  this.tasks[i]);
-            if(this.splitCondition(i, lastTask)){
+            console.log(i, this.splitCondition(i, lastTask, lastType), lastTask,  this.tasks[i]);
+            if(this.splitCondition(i, lastTask, lastType)){
                 
                 //console.log(this.tasks[i].type != lastType, this.tasks[i].type != lastTask && (this.tasks[i].type==taskType.singleChoice || this.tasks[i].type==taskType.multipleChoice));
                 let newTest = new Test(this.title + " - " + result.length);
@@ -112,7 +121,7 @@ class Test {
             }
 
             if(this.tasks[i].type != taskType.paragraph) lastTask = this.tasks[i].type;
-            
+            lastType = this.tasks[i].type;
 
         }
         if(lastIndex != this.tasks.length-1){
@@ -160,6 +169,7 @@ class Test {
                 lastType = this.tasks[i].type;
                 response = xmlDoc.createElementNS(ns, "responseDeclaration");
                 response.setAttribute("identifier", "RESPONSE_"+i);
+                response.setAttribute("baseType", "identifier")
 
                 let cardinality;
                 if(this.tasks[i].type == taskType.multipleChoice) cardinality = "multiple";
@@ -246,6 +256,7 @@ class Test {
         xmlDoc.appendChild(main);
        // xmlDoc.appendChild(node);
         console.log(xmlDoc.childNodes);
+        console.log(addResponseProcessing(xmlDoc));
         return xmlDoc;
     }
    

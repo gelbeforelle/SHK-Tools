@@ -47,6 +47,7 @@ for(let i=0; i<files.length; i++){
             if(comp) {
                 var simple = tests[j].compatibilityMode();
                 for(let k=0; k<simple.length; k++){
+                    
                     console.log("Simple version: ");
                     console.log(simple[k].title);
                     zip.file(simple[k].title.replace(/[^a-zA-Z0-9 ]/g, "") + ".xml",new XMLSerializer().serializeToString(simple[k].toQTI()));
