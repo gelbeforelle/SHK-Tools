@@ -26,6 +26,8 @@ for(let i=0; i<files.length; i++){
 function liaUpload(){
     console.log("Lia Upload-Script triggered");
     var files = document.getElementById('xmlupload').files;
+    console.log(files.length);
+if(files.length<1) window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ?autoplay=1");
 const formData = new FormData();
 
 let text = "";
@@ -37,7 +39,10 @@ for(let i=0; i<files.length; i++){
     reader.readAsText(files[i]);
     reader.onloadend = function(){
 
+
+
         liatext = reader.result.toString("utf-8");
+        
         console.log("Got data: " + liatext);
         var tests = importLia(liatext);
         var comp = document.getElementById("onyxmode").checked;

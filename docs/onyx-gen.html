@@ -10,23 +10,45 @@
     <script src="Filesaver.js"></script>
     <script src="responseProcessing.js"></script>
 </head>
+
 <body>
+    <header>
+        <img src="TUBAF_Logo_blau.svg" width="180" height="180"></img>
+        <h1>LiaScript-Konverter nach IMS QTI (OPAL)</h1>
+    </header>
+
+    <nav>
+        <div>
+            <ul>
+                <li><a href="./">Startseite</a><ul><li><a href="./lia-gen.html">OPAL->LiaScript</a></li><li>LiaScript->OPAL</li></ul></li>
+            </ul>
+        </div>
+    </nav>
+
     <section>
-        <h1>
-            Datei-Upload
-        </h1>
-        <input type="file" id="xmlupload" name="xmlupload" multiple=""/>
-        <input type="button" value="LiaScript auslesen" id="button1" onclick="liaUpload()">
+        <div id="upload">
+            <h1>
+                Datei-Upload
+            </h1>
         
-        <label><input type="checkbox" id="onyxmode" checked="true"/>ONYX Kompatibilitätsmodus verwenden</label>
+            <input type="file" id="xmlupload" name="xmlupload" multiple=""/>
+        </div>
         
-        <h2>
-            Ihr ONYX-Code lautet:
-            
-        </h2>
-        <p id="onyxfield"></p>
+        
+        <div id="confirm">
+            <input type="button" value="LiaScript auslesen" id="button1" onclick="liaUpload()">
+        
+            <label><input type="checkbox" id="onyxmode" checked="true"/><span data-tooltip="Zusammengesetzte Tests werden aufgetrennt und sind somit mit einigen Seiten besser kompatibel (z.B. OPAL)">ONYX Kompatibilitätsmodus verwenden</span></label>
+        </div>
         
     </section>
+
+    <section>
+        <p id="onyxfield"></p>
+    </section>
+        
+        
+    
     
     
     

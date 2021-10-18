@@ -1,0 +1,139 @@
+a:link{
+    color:rgba(255, 255, 255, 0.966);
+}
+
+a:visited{
+    color:rgba(140, 169, 250, 0.63);
+}
+
+header>h1{
+    height: 114px;
+    width: 100%;
+    color: rgba(255, 255, 255, 0.966);
+    background-color: #0063a7;
+    font-family: Calibri, Arial, Helvetica, sans-serif;
+    font-size: 250%;
+    position: absolute;
+    top: -27px;
+    left: 180px;
+    text-align: left;
+    padding-top: 66px;
+    
+}
+
+header>img{
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+html, body, nav>div{
+    height: 100vh;
+    min-height: 100vh !important;
+}
+
+nav{
+    position: relative;
+    top: 160px;
+    left: -20px;
+
+    width: 180px;
+    
+    background-color: #0063a7;
+    
+    
+}
+
+nav ul{
+    list-style-type: none;
+    
+    
+}
+
+nav>div{
+    position:relative;
+    left: -10px;
+    top: 20px;
+    /*width: 170px;*/
+    text-align: left;
+    font-family: Calibri, Arial, Helvetica, sans-serif;
+    color:rgba(255, 255, 255, 0.966);
+
+    
+}
+
+section{
+    color: black;
+    font-family: Calibri, Arial, Helvetica, sans-serif;
+    position: absolute;
+    top: 200px;
+    left: 180px;
+    text-align: left;
+    padding-top: 66px;
+    float: right;
+    overflow: hidden;
+}
+
+section h1{
+    float: left;
+    text-align: center;
+    overflow: hidden;
+
+}
+
+#upload>input{
+    width: 500px;
+    overflow: hidden;
+}
+
+#upload{
+    float: right;
+    overflow: hidden;
+}
+
+#xmlupload{
+    position: relative;
+    top: 23px;
+    left: 30px;
+}
+
+#confirm{
+    position: relative;
+    
+    left: 163px;
+}
+
+#confirm>label{
+    color:darkgrey;
+    position: relative;
+   
+}
+
+
+
+[data-tooltip] {
+    position: relative;
+}
+ 
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s;
+ 
+  display: block;  
+  position: absolute; 
+  bottom: 1em;
+  left: -6em;
+  width: 15em;
+  padding: 0.5em;
+  z-index: 100;
+  color: #000; 
+  background-color: #ebffe6;
+  border: solid 1px #6ac304;
+  border-radius: 0.5em;  
+}
+ 
+[data-tooltip]:hover::after {
+  opacity: 1;
+}
