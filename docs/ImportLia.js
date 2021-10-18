@@ -1,5 +1,5 @@
 
-
+const ns = "http://www.imsglobal.org/xsd/imsqti_v2p1";
 
 const taskType = {
     text: 0,
@@ -21,11 +21,13 @@ function idGen(){
  return "id-TUBAF-" + Date.now();
 }
 
-var xmlns = "http://www.imsglobal.org/xsd/imsqti_v2p1";
+
 
 var currType = taskType.text;
 
-var doc = document.createElement("itemBody");
+
+
+var doc = document.createElementNS(ns, "itemBody");
 
 class Task {
     constructor(type, isCorrect, text) {
@@ -47,7 +49,7 @@ class Test {
         else this.title = "Unnamed test";
         this.tasks = [];
         this.valid = false;
-        this.link = "http://www.imsglobal.org/xsd/imsqti_v2p1";
+        
     }
     addTask(task){
         this.tasks[this.tasks.length] = task;
@@ -57,23 +59,34 @@ class Test {
         }
     }
 
-    splitCondition(i,  lastTask){
+    splitCondition(i,  lastTask, lastType){
         
 
         var result = false;
 
         var breakFlag = false;
         var taskFlag = false;
+        
         for(i++ ; i<this.tasks.length; i++){
-            if(this.tasks[i].type==taskType.paragraph && this.tasks[i].isCorrect && isEmptyOrSpaces(this.tasks[i].text)){
-                breakFlag = true;
-                break;
-            } else if(this.tasks[i].type != lastTask && this.tasks[i].type != taskType.paragraph){
-                taskFlag = true;
-                break;
+            if(this.tasks[i].type != taskType.paragraph){
+                if(this.tasks[i].type != lastTask){
+                     taskFlag = true;
+                     break;
+                }
+                else if(this.tasks[i].type != lastType && this.tasks[i] != taskType.paragraph) return true;
+                console.log(i);
+                
+            
+            } else if(this.tasks[i].type==taskType.paragraph && this.tasks[i].isCorrect){
+                if(isEmptyOrSpaces(this.tasks[i].text)) {
+                    breakFlag = true;
+                    console.log(i);
+                    break;
+                } 
             }
 
         }
+        
        // return (this.tasks[i].type != lastTask && this.tasks[i].type != taskType.paragraph) || ((this.tasks[i].type != lastTask || linebreak) && (this.tasks[i].type==taskType.singleChoice || this.tasks[i].type==taskType.multipleChoice));
        if(breakFlag) return false;
        else return taskFlag && !isNullOrUndefined(lastTask);
@@ -89,8 +102,8 @@ class Test {
         var lastIndex = 0;
 
         for(let i=0; i<this.tasks.length; i++){
-            console.log(i, this.splitCondition(i, lastTask), lastTask,  this.tasks[i]);
-            if(this.splitCondition(i, lastTask)){
+            console.log(i, this.splitCondition(i, lastTask, lastType), lastTask,  this.tasks[i]);
+            if(this.splitCondition(i, lastTask, lastType)){
                 
                 //console.log(this.tasks[i].type != lastType, this.tasks[i].type != lastTask && (this.tasks[i].type==taskType.singleChoice || this.tasks[i].type==taskType.multipleChoice));
                 let newTest = new Test(this.title + " - " + result.length);
@@ -108,7 +121,7 @@ class Test {
             }
 
             if(this.tasks[i].type != taskType.paragraph) lastTask = this.tasks[i].type;
-            
+            lastType = this.tasks[i].type;
 
         }
         if(lastIndex != this.tasks.length-1){
@@ -135,14 +148,15 @@ class Test {
         // converts test to xml document for ONYX
         
         var xmlDoc = document.implementation.createDocument("", "", null);
-        var main = xmlDoc.createElement("assessmentItem");
+        
+        var main = xmlDoc.createElementNS(ns, "assessmentItem");
         main.setAttribute("title", this.title);
         
-        main.setAttribute("xlmns", this.link)
+        
         
         main.setAttribute("identifier", idGen());
 
-        main.setAttributeNS("qti", "xlmns", this.link);
+        //main.setAttributeNS("qti", "xlmns", this.link);
 
         console.log(main);
 
@@ -153,8 +167,9 @@ class Test {
             if(this.tasks[i].type != taskType.paragraph) if(this.tasks[i].type != lastType || this.tasks[i].type == taskType.text){
                 if(response) main.appendChild(response);
                 lastType = this.tasks[i].type;
-                response = xmlDoc.createElement("responseDeclaration");
+                response = xmlDoc.createElementNS(ns, "responseDeclaration");
                 response.setAttribute("identifier", "RESPONSE_"+i);
+                response.setAttribute("baseType", "identifier")
 
                 let cardinality;
                 if(this.tasks[i].type == taskType.multipleChoice) cardinality = "multiple";
@@ -162,8 +177,8 @@ class Test {
                 response.setAttribute("cardinality", cardinality);
 
                 if(this.tasks[i].type == taskType.text){
-                    let correct = xmlDoc.createElement("correctResponse");
-                    let value = xmlDoc.createElement("value");
+                    let correct = xmlDoc.createElementNS(ns, "correctResponse");
+                    let value = xmlDoc.createElementNS(ns, "value");
                     value.innerHTML = this.tasks[i].text;
                     correct.appendChild(value);
                     response.appendChild(correct);
@@ -171,11 +186,11 @@ class Test {
 
             } if((this.tasks[i].type == taskType.singleChoice || this.tasks[i].type == taskType.multipleChoice) && this.tasks[i].isCorrect) {
                 if(response.getElementsByTagName("correctResponse").length<=0){
-                    response.appendChild(xmlDoc.createElement("correctResponse"));
+                    response.appendChild(xmlDoc.createElementNS(ns, "correctResponse"));
                     console.log("Created missing correctResponse!");
                 }
                 
-                let value = xmlDoc.createElement("value");
+                let value = xmlDoc.createElementNS(ns, "value");
                 value.innerHTML = "ID_" + i;
                 console.log("Data added:");
                 console.log(value.innerText);
@@ -184,14 +199,15 @@ class Test {
                 response.getElementsByTagName("correctResponse")[0].appendChild(value);
             }
         }
+
         if(response) main.appendChild(response);
-        let body = xmlDoc.createElement("itemBody");
-        let currParagraph=xmlDoc.createElement("p");
+        let body = xmlDoc.createElementNS(ns, "itemBody");
+        let currParagraph=xmlDoc.createElementNS(ns, "p");
         for(let i=0; i<this.tasks.length;){
             let entry;
             console.log("Starting switch... ", i);
             switch(this.tasks[i].type){
-                case taskType.text : entry = xmlDoc.createElement("textEntryInteraction");
+                case taskType.text : entry = xmlDoc.createElementNS(ns, "textEntryInteraction");
                                      entry.setAttribute("responseIdentifier", "RESPONSE_"+i);
                                      console.log("Text entry: ", entry.outerHTML);
                                      currParagraph.innerHTML+=entry.outerHTML;
@@ -200,15 +216,18 @@ class Test {
                                      
                                      break;
                 case taskType.multipleChoice : case taskType.singleChoice : if(currParagraph.innerHTML) body.appendChild(currParagraph);
-                                               currParagraph = xmlDoc.createElement("p");
-                                               entry = xmlDoc.createElement("choiceInteraction");
+                                               currParagraph = xmlDoc.createElementNS(ns, "p");
+                                               entry = xmlDoc.createElementNS(ns, "choiceInteraction");
                                                entry.setAttribute("responseIdentifier", "RESPONSE_"+i);
+                                               var cardinality = 1;
+                                               if(this.tasks[i].type == taskType.multipleChoice) cardinality = 0;
+                                               entry.setAttribute("maxChoices", cardinality);
                                                for(; i<this.tasks.length; i++){
                                                 if(!(this.tasks[i].type == taskType.singleChoice || this.tasks[i].type == taskType.multipleChoice)) break;
                                                 console.log("Adding to MC/ SC: ", this.tasks[i].text);
-                                                let choice = xmlDoc.createElement("simpleChoice");
+                                                let choice = xmlDoc.createElementNS(ns, "simpleChoice");
                                                 choice.setAttribute("identifier", "ID_"+i);
-                                                let p = xmlDoc.createElement("p");
+                                                let p = xmlDoc.createElementNS(ns, "p");
                                                 p.innerHTML=this.tasks[i].text;
                                                 choice.appendChild(p);
                                                 entry.appendChild(choice);
@@ -219,7 +238,7 @@ class Test {
                                                break;
                 case taskType.paragraph : if(this.tasks[i].isCorrect && this.tasks[i].text){
                                            body.appendChild(currParagraph);
-                                           currParagraph = xmlDoc.createElement("p");
+                                           currParagraph = xmlDoc.createElementNS(ns, "p");
                                            currParagraph.innerHTML = this.tasks[i].text;
                                           } else {
                                             currParagraph.innerHTML += this.tasks[i].text;
@@ -237,6 +256,7 @@ class Test {
         xmlDoc.appendChild(main);
        // xmlDoc.appendChild(node);
         console.log(xmlDoc.childNodes);
+        console.log(addResponseProcessing(xmlDoc));
         return xmlDoc;
     }
    

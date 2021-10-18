@@ -1,6 +1,6 @@
 function download(filename, text){
     var element = document.createElement("a");
-    element.setAttribute("href", "data:text/xml;charset=utf-8," + encodeURIComponent(text));
+    element.setAttribute("href", "data:application/zip;charset=utf-8," + encodeURIComponent(text));
     element.setAttribute("download", filename);
 
     element.style.display = "none";
@@ -10,3 +10,4 @@ function download(filename, text){
 
     document.body.removeChild(element);
 }
+
