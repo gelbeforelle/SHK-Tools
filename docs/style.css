@@ -70,8 +70,8 @@ section{
     left: 180px;
     text-align: left;
     padding-top: 66px;
-    float: right;
-    overflow: hidden;
+    
+    
 }
 
 section h1{
@@ -83,24 +83,22 @@ section h1{
 
 #upload>input{
     width: 500px;
-    overflow: hidden;
+    position: relative;
+    top: 2em;
+    left: 2em;
 }
 
-#upload{
+ /*#upload{
     float: right;
     overflow: hidden;
-}
+}*/
 
-#xmlupload{
-    position: relative;
-    top: 23px;
-    left: 30px;
-}
+
 
 #confirm{
     position: relative;
-    
-    left: 163px;
+    top: 2em;
+    left: 1em;
 }
 
 #confirm>label{
