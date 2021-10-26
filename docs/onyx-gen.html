@@ -8,6 +8,7 @@
     <script src="Download.js"></script>
     <script src="jszip.js"></script>
     <script src="Filesaver.js"></script>
+    <script src="showdown.min.js"></script>
     <script src="responseProcessing.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
@@ -35,17 +36,21 @@
             <input type="file" id="xmlupload" name="xmlupload" multiple=""/>
         </div>
         
+        <br/>
         
         <div id="confirm">
             <input type="button" value="LiaScript auslesen" id="button1" onclick="liaUpload()">
         
             <label><input type="checkbox" id="onyxmode" checked="true"/><span data-tooltip="Zusammengesetzte Tests werden aufgetrennt und sind somit mit einigen Seiten besser kompatibel (z.B. OPAL)">ONYX Kompatibilitätsmodus verwenden</span></label>
         </div>
+
         
     </section>
 
-    <section>
-        <p id="onyxfield"></p>
+    <section id="switch">
+        <div>
+            <a href="./onyx2.html">Oder nutzen Sie die direkte Texteingabe!</a>
+        </div>
     </section>
         
         

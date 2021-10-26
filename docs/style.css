@@ -1,13 +1,42 @@
-a:link{
+#switch:not a:link{
     color:rgba(255, 255, 255, 0.966);
 }
+
+
+
+
+
+/*#switch a:link{
+    color:rgb(0, 0, 0);
+}*/
 
 a:visited{
     color:rgba(140, 169, 250, 0.63);
 }
 
-header>h1{
-    height: 114px;
+#main{
+    width: 80%;
+    position: relative;
+    top: -80px;
+    left: -10px;
+}
+
+#textfield{
+    min-height: 10em;
+    width: 100%;
+}
+
+form{
+    width: 100%;
+    height: 100%;
+}
+
+header{
+    
+    height: 180px;
+}
+header h1{
+    min-height: 114px;
     width: 100%;
     color: rgba(255, 255, 255, 0.966);
     background-color: #0063a7;
@@ -21,24 +50,26 @@ header>h1{
     
 }
 
-header>img{
+header img{
     position: absolute;
     top: 0;
     left: 0;
+    overflow: hidden;
 }
 
 html, body, nav>div{
-    height: 100vh;
+    min-height: 100vh;
     min-height: 100vh !important;
+    
 }
 
 nav{
     position: relative;
-    top: 160px;
+    top: -20px;
     left: -20px;
-
+    float: left;
     width: 180px;
-    
+    overflow: hidden;
     background-color: #0063a7;
     
     
@@ -65,28 +96,19 @@ nav>div{
 section{
     color: black;
     font-family: Calibri, Arial, Helvetica, sans-serif;
-    position: absolute;
+    float: left;
     top: 200px;
     left: 180px;
     text-align: left;
     padding-top: 66px;
+    /*overflow: hidden;*/
     
     
 }
 
-section h1{
-    float: left;
-    text-align: center;
-    overflow: hidden;
 
-}
 
-#upload>input{
-    width: 500px;
-    position: relative;
-    top: 2em;
-    left: 2em;
-}
+
 
  /*#upload{
     float: right;
@@ -95,11 +117,7 @@ section h1{
 
 
 
-#confirm{
-    position: relative;
-    top: 2em;
-    left: 1em;
-}
+
 
 #confirm>label{
     color:darkgrey;

@@ -1,0 +1,89 @@
+<!doctype html>
+<head>
+    
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+
+
+
+
+    
+    
+
+    
+    <link rel="shortcut icon" href="#">
+    <meta charset="UTF-8">
+    <script src="ImportLia.js"></script>
+    <script src="Upload.js"></script>
+    <script src="Download.js"></script>
+    <script src="jszip.js"></script>
+    <script src="Filesaver.js"></script>
+    <script src="showdown.min.js"></script>
+    <script src="responseProcessing.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+    <header>
+        <div>
+            <img src="TUBAF_Logo_blau.svg" width="180" height="180"></img>
+            <h1>LiaScript-Konverter nach IMS QTI (OPAL)</h1>
+        </div>
+        
+    </header>
+
+    <nav>
+        <div>
+            <ul>
+                <li><a href="./">Startseite</a><ul><li><a href="./lia-gen.html">OPAL🠒LiaScript</a></li><li>LiaScript🠒OPAL</li></ul></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section id="main">
+        <div id="upload">
+            <h1>
+                LiaScript Eingabe über Markdown
+            </h1>
+
+            
+                <div id="switch">
+                    <a href="./onyx-gen.html">Oder nutzen Sie die Upload-Funktion!</a>
+                </div>
+            
+        
+            <form><textarea type="text" id="textfield"></textarea></form>
+            <br/>
+        </div>
+
+        
+        
+        
+        <div id="confirm">
+            <input type="button" value="LiaScript auslesen" id="button1" onclick="downloadZip(simplemde.value())">
+        
+            <label><input type="checkbox" id="onyxmode" checked="true"/><span data-tooltip="Zusammengesetzte Tests werden aufgetrennt und sind somit mit einigen Seiten besser kompatibel (z.B. OPAL)">ONYX Kompatibilitätsmodus verwenden</span></label>
+        </div>
+
+        <div id="downloadText">
+            <input type="button" value="Diesen Text speichern" id="button2" onclick="download('Test.txt', simplemde.value())">
+        </div>
+
+        
+        
+    </section>
+
+    
+        
+        
+    
+    <script>
+        var txt = "# This is the header of your test\nYou can use **Markdown** format for your test\nUsing a format similar to *Markdown*, you can add different tasks\n\n[[x]] Amazing!\n[[X]] Nice!\n[[]] <- This would be false\n[[ ]] Or this...\n\nHow about single choice?\n(Be careful not to put a blank line right before a task as it is currently bugged)\n[(x)] Great!\n[()] Impossible!\n\nAnother feature is [[text gaps]]\n\nStay tuned for more cool features on [my GitHub](https://github.com/gelbeforelle/SHK-Tools)";
+        var simplemde = new SimpleMDE();
+        simplemde.value(txt);
+    </script>
+    
+    
+</body>

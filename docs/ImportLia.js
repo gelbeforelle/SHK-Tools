@@ -8,6 +8,8 @@ const taskType = {
     paragraph: 3
 };
 
+
+
 function isEmptyOrSpaces(str){
     return str === null || str.match(/^ *$/) !== null;
 }
@@ -19,6 +21,11 @@ function isNullOrUndefined(n){
 
 function idGen(){
  return "id-TUBAF-" + Date.now();
+}
+
+function ToHTML(string){
+    var conv = new showdown.Converter();
+    return conv.makeHtml(string);
 }
 
 
@@ -67,21 +74,22 @@ class Test {
         var breakFlag = false;
         var taskFlag = false;
         
-        for(i++ ; i<this.tasks.length; i++){
+        for(i++ ; i<this.tasks.length && !breakFlag; i++){
             if(this.tasks[i].type != taskType.paragraph){
                 if(this.tasks[i].type != lastTask){
                      taskFlag = true;
                      break;
                 }
                 else if(this.tasks[i].type != lastType && this.tasks[i] != taskType.paragraph) return true;
-                console.log(i);
+                
                 
             
             } else if(this.tasks[i].type==taskType.paragraph && this.tasks[i].isCorrect){
                 if(isEmptyOrSpaces(this.tasks[i].text)) {
-                    breakFlag = true;
-                    console.log(i);
-                    break;
+                    for(; i<this.tasks.length && this.tasks[i].type == taskType.paragraph; i++){
+                        if(!isEmptyOrSpaces(this.tasks[i].text)) breakFlag = true;
+                    }                  
+                    
                 } 
             }
 
@@ -179,7 +187,7 @@ class Test {
                 if(this.tasks[i].type == taskType.text){
                     let correct = xmlDoc.createElementNS(ns, "correctResponse");
                     let value = xmlDoc.createElementNS(ns, "value");
-                    value.innerHTML = this.tasks[i].text;
+                    value.innerHTML = ToHTML(this.tasks[i].text);
                     correct.appendChild(value);
                     response.appendChild(correct);
                 }
@@ -228,7 +236,7 @@ class Test {
                                                 let choice = xmlDoc.createElementNS(ns, "simpleChoice");
                                                 choice.setAttribute("identifier", "ID_"+i);
                                                 let p = xmlDoc.createElementNS(ns, "p");
-                                                p.innerHTML=this.tasks[i].text;
+                                                p.innerHTML=ToHTML(this.tasks[i].text);
                                                 choice.appendChild(p);
                                                 entry.appendChild(choice);
                                                }
@@ -239,9 +247,9 @@ class Test {
                 case taskType.paragraph : if(this.tasks[i].isCorrect && this.tasks[i].text){
                                            body.appendChild(currParagraph);
                                            currParagraph = xmlDoc.createElementNS(ns, "p");
-                                           currParagraph.innerHTML = this.tasks[i].text;
+                                           currParagraph.innerHTML = ToHTML(this.tasks[i].text);
                                           } else {
-                                            currParagraph.innerHTML += this.tasks[i].text;
+                                            currParagraph.innerHTML += ToHTML(this.tasks[i].text);
                                           }
                                           console.log(this.tasks[i]);
                                           i++;
@@ -256,6 +264,9 @@ class Test {
         xmlDoc.appendChild(main);
        // xmlDoc.appendChild(node);
         console.log(xmlDoc.childNodes);
+        var paragraphs = xmlDoc.querySelectorAll("p");
+        
+        
         console.log(addResponseProcessing(xmlDoc));
         return xmlDoc;
     }
