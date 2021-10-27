@@ -5,9 +5,52 @@ const taskType = {
     text: 0,
     multipleChoice: 1,
     singleChoice: 2,
-    paragraph: 3
+    paragraph: 3,
+    inlineChoice : 4
 };
 
+function textHandler(string){
+    var isChoice = false;
+    var answers = [];
+    var correctAnswers = [];
+    var isCorrect = false;
+    var result;
+    var array = Array.from(string);
+    var j=0;
+
+    for(var i=0; i<array.length; i++){
+        if(array[i]=="|" || (isChoice && i+1 == array.length)){
+            if(i>0){
+                if(isChoice && i+1 == array.length) i++;
+                isChoice ||= array[i-1] != "\\";
+                if(isChoice){
+                    var answer = "";
+                    for(; j<i; j++){
+                        answer += array[j];
+                        console.log("inner loop");
+                    }
+                    j++;
+                    var aux = answer.trim();
+                    
+                    if(aux.slice(0, 1) == "(" && aux.slice(-1) == ")"){
+                        
+                        isCorrect = true;
+                        answer = answer.replace("(", "").replace(")", "");
+                    }
+                    answers[answers.length] = new InlineChoiceAnswer(answer, isCorrect);
+                    var isCorrect = false;
+                }
+            }
+        }
+    }
+
+    
+
+    
+    if(isChoice) result = new Task(taskType.inlineChoice, false, answers);
+    else result = new Task(taskType.text, false, string);
+    return result;
+}
 
 
 function isEmptyOrSpaces(str){
@@ -25,7 +68,7 @@ function idGen(){
 
 function ToHTML(string){
     var conv = new showdown.Converter();
-    return conv.makeHtml(string);
+    return conv.makeHtml(string).slice(3, -4);
 }
 
 
@@ -35,6 +78,13 @@ var currType = taskType.text;
 
 
 var doc = document.createElementNS(ns, "itemBody");
+
+class InlineChoiceAnswer {
+    constructor(name, isCorrect){
+        this.isCorrect = isCorrect;
+        this.name = name;
+    }
+}
 
 class Task {
     constructor(type, isCorrect, text) {
@@ -172,7 +222,7 @@ class Test {
         var response;
         for(let i=0, lastType=taskType.paragraph; i<this.tasks.length; i++){
             
-            if(this.tasks[i].type != taskType.paragraph) if(this.tasks[i].type != lastType || this.tasks[i].type == taskType.text){
+            if(this.tasks[i].type != taskType.paragraph) if(this.tasks[i].type != lastType || this.tasks[i].type == taskType.text || this.tasks[i].type == taskType.inlineChoice){
                 if(response) main.appendChild(response);
                 lastType = this.tasks[i].type;
                 response = xmlDoc.createElementNS(ns, "responseDeclaration");
@@ -189,6 +239,18 @@ class Test {
                     let value = xmlDoc.createElementNS(ns, "value");
                     value.innerHTML = ToHTML(this.tasks[i].text);
                     correct.appendChild(value);
+                    response.appendChild(correct);
+                } else if(this.tasks[i].type == taskType.inlineChoice){
+                    let correct = xmlDoc.createElementNS(ns, "correctResponse");
+                    for(var j=0; j<this.tasks[i].text.length; j++){
+                        //alert(this.tasks[i].text[j].name);
+                        if(this.tasks[i].text[j].isCorrect) {
+                            alert("correct");
+                            let value = xmlDoc.createElementNS(ns, "value");
+                            value.innerHTML = this.tasks[i].text[j].name;
+                            correct.appendChild(value);
+                        }
+                    }
                     response.appendChild(correct);
                 }
 
@@ -223,6 +285,17 @@ class Test {
                                      i++;
                                      
                                      break;
+                case taskType.inlineChoice : entry = xmlDoc.createElementNS(ns, "inlineChoiceInteraction");
+                                             entry.setAttribute("responseIdentifier", "RESPONSE_"+i);
+                                             for(var j=0; j<this.tasks[i].text.length; j++){
+                                                 var choice = xmlDoc.createElementNS(ns, "inlineChoice");
+                                                 choice.setAttribute("identifier", this.tasks[i].text[j].name);
+                                                 choice.innerHTML = ToHTML(this.tasks[i].text[j].name);
+                                                 entry.appendChild(choice);
+                                             }
+                                             currParagraph.innerHTML+=entry.outerHTML;
+                                             i++;
+                                             break;
                 case taskType.multipleChoice : case taskType.singleChoice : if(currParagraph.innerHTML) body.appendChild(currParagraph);
                                                currParagraph = xmlDoc.createElementNS(ns, "p");
                                                entry = xmlDoc.createElementNS(ns, "choiceInteraction");
@@ -267,7 +340,7 @@ class Test {
         var paragraphs = xmlDoc.querySelectorAll("p");
         
         
-        console.log(addResponseProcessing(xmlDoc));
+        //console.log(addResponseProcessing(xmlDoc));
         return xmlDoc;
     }
    
@@ -354,7 +427,7 @@ function parsePage(text, test){
                         case 2 : test.addTask(new Task(taskType.multipleChoice, false, readLine(array, j+2))); break;
                         case 3 : if(!array[i+2].localeCompare("x", undefined, { sensitivity: 'accent' })) test.addTask(new Task(taskType.multipleChoice, true, readLine(array, j+2)));
                                  else if(array[i+2]==" ") test.addTask(new Task(taskType.multipleChoice, false, readLine(array, j+2)));
-                                 else test.addTask(new Task(taskType.text, true, array[i+2])); break;
+                                 else test.addTask(new Task(taskType.text, false, array[i+2])); break;
                         default : console.log("Text Task detected");
                                   let k=0;
                                   let text ="";
@@ -364,7 +437,7 @@ function parsePage(text, test){
                                   test.addTask(new Task(taskType.paragraph, false, text));
                                   text="";
                                   if(i+2<j) for(k=i+2; k<j; k++) text += array[k];
-                                  test.addTask(new Task(taskType.text, false, text)); 
+                                  test.addTask(textHandler(text)); 
                                   text="";
                                   for(let l=k+2; l<array.length; l++){
                                       if(array[l]=="\n") break;

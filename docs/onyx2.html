@@ -21,7 +21,7 @@
     <script src="jszip.js"></script>
     <script src="Filesaver.js"></script>
     <script src="showdown.min.js"></script>
-    <script src="responseProcessing.js"></script>
+    <script src="ResponseProcessing.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
@@ -68,7 +68,7 @@
         </div>
 
         <div id="downloadText">
-            <input type="button" value="Diesen Text speichern" id="button2" onclick="download('Test.txt', simplemde.value())">
+            <input type="button" value="Diesen Text speichern" id="button2" onclick="txtDownload(simplemde.value())">
         </div>
 
         
@@ -80,7 +80,7 @@
         
     
     <script>
-        var txt = "# This is the header of your test\nYou can use **Markdown** format for your test\nUsing a format similar to *Markdown*, you can add different tasks\n\n[[x]] Amazing!\n[[X]] Nice!\n[[]] <- This would be false\n[[ ]] Or this...\n\nHow about single choice?\n(Be careful not to put a blank line right before a task as it is currently bugged)\n[(x)] Great!\n[()] Impossible!\n\nAnother feature is [[text gaps]]\n\nStay tuned for more cool features on [my GitHub](https://github.com/gelbeforelle/SHK-Tools)";
+        var txt = "# This is the header of your test\nYou can use **Markdown** format for your test\nUsing a format similar to *Markdown*, you can add different tasks\n\n[[x]] Amazing!\n[[X]] Nice!\n[[]] <- This would be false\n[[ ]] Or this...\n\nHow about single choice?\n\n[(x)] Great!\n[()] Impossible!\n\nAnother feature is [[text gaps]]\n\nStay tuned for more cool features on [my GitHub](https://github.com/gelbeforelle/SHK-Tools)";
         var simplemde = new SimpleMDE();
         simplemde.value(txt);
     </script>

@@ -11,6 +11,10 @@ function download(filename, text){
     document.body.removeChild(element);
 }
 
+function txtDownload(string){
+    download("Test.txt", string);
+}
+
 function downloadZip(liatext){
         console.log("Got data: " + liatext);
         var tests = importLia(liatext);
