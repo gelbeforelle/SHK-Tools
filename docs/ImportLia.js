@@ -245,7 +245,7 @@ class Test {
                     for(var j=0; j<this.tasks[i].text.length; j++){
                         //alert(this.tasks[i].text[j].name);
                         if(this.tasks[i].text[j].isCorrect) {
-                            alert("correct");
+                            //alert("correct");
                             let value = xmlDoc.createElementNS(ns, "value");
                             value.innerHTML = this.tasks[i].text[j].name;
                             correct.appendChild(value);
@@ -340,7 +340,7 @@ class Test {
         var paragraphs = xmlDoc.querySelectorAll("p");
         
         
-        //console.log(addResponseProcessing(xmlDoc));
+        console.log(addResponseProcessing(xmlDoc));
         return xmlDoc;
     }
    
@@ -378,14 +378,19 @@ function importLia(lia){
     let hasTitle = false;
     for(var i=0; i<array.length; i++){
         //different condtions could be set here!
-        if((array[i] == "#" && array[i-1] != "\\" ) || i==array.length-1){
+        if((array[i] == "#" && array[i-1] != "\\" ) || i==array.length-1){ //very basic condition to test for headline 
             if(i==array.length-1) currPage+=array[i];
+            console.log("Create Test:");
+            console.log(currPage);
             result[result.length] = parsePage(currPage, new Test(title));
             currPage = "";
             title = "";  
             hasTitle = false;
         } else{
-            if(array[i]=="\n") hasTitle = true;
+            if(array[i]=="\n" && !hasTitle){
+                hasTitle = true;
+                i++;
+            };
             if(hasTitle) {
                 switch(array[i]){
                     case "\r" : currPage += ""; break;
@@ -434,6 +439,7 @@ function parsePage(text, test){
                                   for(let l=linestart+1; l<i; l++){
                                     text+=array[l];
                                   }
+                                  //alert(text);
                                   test.addTask(new Task(taskType.paragraph, false, text));
                                   text="";
                                   if(i+2<j) for(k=i+2; k<j; k++) text += array[k];
@@ -464,10 +470,12 @@ function parsePage(text, test){
                     linestart=i;
                 }
             }
-        } else if(array[i]=="\n"){
+        } else if(array[i]=="\n"){ //under investigation for causing a bug where a line is read twice
             console.log("Paragraph: ", readLine(array, i));
-            
-            test.addTask(new Task(taskType.paragraph, true, readLine(array, linestart+1)));
+            if(i>0) i++; //
+            //alert(i);
+            //alert(linestart);
+            test.addTask(new Task(taskType.paragraph, true, readLine(array, linestart)));
             linestart = i;
         }
     }
