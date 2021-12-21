@@ -1,3 +1,5 @@
+
+
 function download(filename, text){
     var element = document.createElement("a");
     element.setAttribute("href", "data:application/zip;charset=utf-8," + encodeURIComponent(text));
@@ -12,7 +14,19 @@ function download(filename, text){
 }
 
 function txtDownload(string){
-    download("Test.txt", string);
+    var file = new Blob([string], { type: 'application/javascript;charset=utf-8' });
+    var link = window.URL.createObjectURL(file);
+    let array = Array.from(string);
+    title = "";
+    for(var i=0; i<array.length; i++){
+        //different condtions could be set here!
+        title+=array[i];
+        if(array[i]=="\n") break;
+    }
+    saveAs(file, title+".md");
+   // window.location = link;
+    console.log(string);
+    //download("Test.txt", string);
 }
 
 function downloadZip(liatext){
