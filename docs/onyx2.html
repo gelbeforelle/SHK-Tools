@@ -80,7 +80,7 @@
         
     
     <script>
-        var txt = "# This is the header of your test\nYou can use **Markdown** format for your test\nUsing a format similar to *Markdown*, you can add different tasks\n\n[[x]] Amazing!\n[[X]] Nice!\n[[]] <- This would be false\n[[ ]] Or this...\n\nHow about single choice?\n\n[(x)] Great!\n[()] Impossible!\n\nAnother feature is [[text gaps]]\n\nStay tuned for more cool features on [my GitHub](https://github.com/gelbeforelle/SHK-Tools)";
+        var txt = "# This is the header of your test\nYou can use **Markdown** format for your test\nUsing a format similar to *Markdown*, you can add different tasks\n\n[[x]] Amazing!\n[[X]] Nice!\n[[]] <- This would be false\n[[ ]] Or this...\n\n Please add a blank line after a task, a paragraph might not be recognized as expected \n How about single choice?\n\n[(x)] Great!\n[()] Impossible!\n\nAnother feature is [[text gaps]]\nNew: [[ Self-destruct sequence | (Inline Choice)]] \n\nStay tuned for more cool features on [my GitHub](https://github.com/gelbeforelle/SHK-Tools)\n(Note that this paragraph will be ignored, since it is after the last question in the LiaScript)";
         var simplemde = new SimpleMDE();
         simplemde.value(txt);
     </script>
