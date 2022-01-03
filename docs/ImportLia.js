@@ -1,4 +1,5 @@
-
+const embed1 = '&lt; iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/'
+const embed2 = '&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen&gt;&lt;/iframe&gt;';
 const ns = "http://www.imsglobal.org/xsd/imsqti_v2p1";
 
 const taskType = {
@@ -9,7 +10,41 @@ const taskType = {
     inlineChoice : 4
 };
 
+function mathCompatiblityString(string){
+    var array = Array.from(string);
+    return mathCompatibility(array).join("");
+}
+
+function mathCompatibility(array){
+    var isNegated = false;
+    // var isMathmode = false;
+    var isOpen = false;
+    var result = [];
+    // var array = Array.from(string);
+    for(var i=0; i<array.length; i++){
+        if(isNegated){
+            isNegated = false;
+            if(isOpen) result[result.length] = array[i];
+        } else {
+                isNegated = (array[i]=="\\");
+            
+                if(array[i]=="$"){
+                    if(i+1<array.length){
+                        if(array[i+1]=="$") i++;
+                    }
+                    console.log("Found $ on position ",i);
+                    result[result.length] = "$";
+                    result[result.length] = "$";
+                    isOpen = !isOpen;
+                } else result[result.length] = array[i];
+            
+        }
+    }
+    return result;
+}
+
 function textHandler(string){
+    console.log("Calling text handler for: ",string);
     var isChoice = false;
     var answers = [];
     var correctAnswers = [];
@@ -18,6 +53,8 @@ function textHandler(string){
     var array = Array.from(string);
     var j=0;
 
+    array = mathCompatibility(array);
+    console.log(array);
     for(var i=0; i<array.length; i++){
         if(array[i]=="|" || (isChoice && i+1 == array.length)){
             if(i>0){
@@ -58,7 +95,7 @@ function isEmptyOrSpaces(str){
 }
 
 function isNullOrUndefined(n){
-    if(n==null ||typeof(n)=="undefined") return true;
+    if(n==null || typeof(n)=="undefined") return true;
     return false;
 }
 
@@ -67,8 +104,34 @@ function idGen(){
 }
 
 function ToHTML(string){
+    console.log("Starting showdown...");
     var conv = new showdown.Converter();
-    return conv.makeHtml(string).slice(3, -4);
+    string = mathCompatiblityString(string);
+    var html = conv.makeHtml(string).slice(3, -4);
+    console.log(typeof(html), ": ",html);
+    var i = html.indexOf('&');
+    var j = html.indexOf('&amp;');
+    while(i>0){
+        console.log("i=",i);
+        console.log("j=",j);
+        if(i != j){
+            
+            html = html.slice(0, i+1) + 'amp;' + html.slice(i+1);
+            console.log(html);
+        }
+        j = html.indexOf('&amp;',j+1);
+        i = html.indexOf('&', i+1);
+        
+    }
+    if(html.indexOf("https://www.youtube.com/watch?v=")>0){
+        var i = html.indexOf("watch?v=")+8;
+        var j = html.indexOf("&amp;",i);
+        html = (j>0)?html.slice(i,j):html.slice(i);
+        html = embed1 + html + embed2;
+        console.log("Embed: ",html);
+    }
+    //return html.slice(3, -4);
+    return html;
 }
 
 
@@ -320,9 +383,11 @@ class Test {
                 case taskType.paragraph : if(this.tasks[i].isCorrect && this.tasks[i].text){
                                            body.appendChild(currParagraph);
                                            currParagraph = xmlDoc.createElementNS(ns, "p");
+                                           console.log("Calling ToHTML for new paragraph: ", this.tasks[i].text);
                                            currParagraph.innerHTML = ToHTML(this.tasks[i].text);
                                           } else {
                                             currParagraph.innerHTML += ToHTML(this.tasks[i].text);
+                                            console.log("Calling ToHTML for existing paragraph: ", this.tasks[i].text);
                                           }
                                           console.log(this.tasks[i]);
                                           i++;
@@ -424,6 +489,7 @@ function parsePage(text, test){
     
     console.log("starting read");
     for(let i=0; i<array.length; i++){
+        //if(array[i]=="\n" && i==0) i++; //???
         if(array[i]=="[" && array[i+1]=="["){
             console.log("detected brackets");
             for(let j=i; j<array.length; j++){
@@ -436,7 +502,9 @@ function parsePage(text, test){
                         default : console.log("Text Task detected");
                                   let k=0;
                                   let text ="";
-                                  for(let l=linestart+1; l<i; l++){
+                                  //missing increment at linestart could cause bugs!
+                                  //if(i>linestart) i++;
+                                  for(let l=linestart; l<i; l++){
                                     text+=array[l];
                                   }
                                   //alert(text);
@@ -471,14 +539,18 @@ function parsePage(text, test){
                 }
             }
         } else if(array[i]=="\n"){ //under investigation for causing a bug where a line is read twice
+            
+            alert(readLine(array, linestart+1));
             console.log("Paragraph: ", readLine(array, i));
-            if(i>0) i++; //
-            //alert(i);
-            //alert(linestart);
+            console.log(linestart, i, readLine(array, linestart));
             test.addTask(new Task(taskType.paragraph, true, readLine(array, linestart)));
-            linestart = i;
+            
+            linestart = i+1;
+
         }
+        //alert(i);
     }
+    
     console.log("Finished reading");
     
 
