@@ -1,9 +1,11 @@
-#switch:not a:link{
+
+
+
+
+
+a:link:not(#switch a:link){
     color:rgba(255, 255, 255, 0.966);
 }
-
-
-
 
 
 /*#switch a:link{

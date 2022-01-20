@@ -1,0 +1,61 @@
+<!doctype html>
+<head>
+    
+    <link rel="shortcut icon" href="#">
+    <meta charset="UTF-8">
+    <script src="../ImportLia.js"></script>
+    <script src="../Upload.js"></script>
+    <script src="../Download.js"></script>
+    <script src="../jszip.js"></script>
+    <script src="../Filesaver.js"></script>
+    <script src="../showdown.min.js"></script>
+    <script src="../responseProcessing.js"></script>
+    <link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+
+<body>
+    <header>
+        <img src="../TUBAF_Logo_blau.svg" width="180" height="180"></img>
+        <h1>LiaScript-Converter to IMS QTI (OPAL)</h1>
+    </header>
+
+    <nav>
+        <div>
+            <ul>
+                <li><a href="./">Home</a><ul><li><a href="./lia-gen.html">OPAL🠒LiaScript</a></li><li>LiaScript🠒OPAL</li></ul></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section>
+        <div id="upload">
+            <h1>
+                Upload data
+            </h1>
+        
+            <input type="file" id="xmlupload" name="xmlupload" multiple=""/>
+        </div>
+        
+        <br/>
+        
+        <div id="confirm">
+            <input type="button" value="Read LiaScript" id="button1" onclick="liaUpload()">
+        
+            <label><input type="checkbox" id="onyxmode" checked="true"/><span data-tooltip="Composite tests are split up to improve compatibility to certain platforms (i.e. OPAL)">Use ONYX compatibility mode</span></label>
+        </div>
+
+        
+    </section>
+
+    <section id="switch">
+        <div>
+            <a href="./onyx2.html">Or use the direct text input!</a>
+        </div>
+    </section>
+        
+        
+    
+    
+    
+    
+</body>

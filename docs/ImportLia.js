@@ -123,13 +123,14 @@ function ToHTML(string){
         i = html.indexOf('&', i+1);
         
     }
-    if(html.indexOf("https://www.youtube.com/watch?v=")>0){
+    // YouTube embed, which does not work in current OPAL, thus disabled
+    /*if(html.indexOf("https://www.youtube.com/watch?v=")>0){
         var i = html.indexOf("watch?v=")+8;
         var j = html.indexOf("&amp;",i);
         html = (j>0)?html.slice(i,j):html.slice(i);
         html = embed1 + html + embed2;
         console.log("Embed: ",html);
-    }
+    }*/
     //return html.slice(3, -4);
     return html;
 }
@@ -540,7 +541,7 @@ function parsePage(text, test){
             }
         } else if(array[i]=="\n"){ //under investigation for causing a bug where a line is read twice
             
-            alert(readLine(array, linestart+1));
+            //alert(readLine(array, linestart+1));
             console.log("Paragraph: ", readLine(array, i));
             console.log(linestart, i, readLine(array, linestart));
             test.addTask(new Task(taskType.paragraph, true, readLine(array, linestart)));

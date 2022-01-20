@@ -49,6 +49,6 @@ for(let i=0; i<files.length; i++){
     
 }
 console.log("Result is: ", text);
-if(text) alert("Result is: ", text);
+//if(text) alert("Result is: ", text);
 
 }
